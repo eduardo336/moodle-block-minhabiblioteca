@@ -1,0 +1,21 @@
+.block-minhabiblioteca-wrapper {
+    text-align: center;
+    padding: 0.5rem 0;
+}
+
+.block-minhabiblioteca-btn {
+    width: 100%;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.block-minhabiblioteca-editinfo {
+    text-align: left;
+    border-top: 1px dashed #ccc;
+    padding-top: 0.5rem;
+}
+
+.block-minhabiblioteca-url {
+    font-size: 0.75rem;
+    cursor: text;
+}
