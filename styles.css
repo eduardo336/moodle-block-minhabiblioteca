@@ -19,3 +19,12 @@
     font-size: 0.75rem;
     cursor: text;
 }
+
+/* Estilo da imagem clicável — ativo quando o bloco da imagem estiver descomentado */
+.block-minhabiblioteca-banner {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: 0.5rem;
+    border-radius: 4px;
+}

@@ -111,8 +111,27 @@ class block_minhabiblioteca extends block_base {
             );
         }
 
+        /* IMAGEM CLICÁVEL — descomente o bloco abaixo para exibir uma imagem abaixo do botão.
+         * Coloque o arquivo em: blocks/minhabiblioteca/pix/banner.png (260x120px recomendado)
+        */
+        $imgurl = new moodle_url('/blocks/minhabiblioteca/pix/banner.png');
+        $banner = html_writer::link(
+            $redirecturl,
+            html_writer::empty_tag('img', [
+                'src'   => $imgurl,
+                'alt'   => $label,
+                'title' => $label,
+                'class' => 'block-minhabiblioteca-banner',
+            ]),
+            [
+                'target' => '_blank',
+                'rel'    => 'noopener noreferrer',
+            ]
+        );
+        
+
         $this->content->text = html_writer::div(
-            $button . $editinfo,
+            $button . /* $banner . */ $editinfo,
             'block-minhabiblioteca-wrapper'
         );
 
