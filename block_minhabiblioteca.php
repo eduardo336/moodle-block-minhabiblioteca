@@ -76,7 +76,7 @@ class block_minhabiblioteca extends block_base {
         // verifica o contexto da página, não do bloco, para herança correta
         $pagecontext = $this->page->context;
         $editinfo = '';
-        /* url para professores — remova o /* e o */ para reativar
+        /* url para professores — para reativar, remova as marcações de comentário
         if ($this->page->user_is_editing() && has_capability('moodle/course:manageactivities', $pagecontext)) {
             $gourl = (new moodle_url('/blocks/minhabiblioteca/go.php'))->out(false);
             $editinfo = html_writer::div(
@@ -93,7 +93,7 @@ class block_minhabiblioteca extends block_base {
         }
         */
 
-        /* imagem clicável — remova o /* e o */ para ativar
+        /* imagem clicável — para ativar, remova as marcações de comentário
          * coloque o arquivo em: blocks/minhabiblioteca/pix/banner.png (260x120px recomendado)
         $imgurl = new moodle_url('/blocks/minhabiblioteca/pix/banner.png');
         $banner = html_writer::link(
