@@ -25,8 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
-
-    // URL base da API.
     $settings->add(new admin_setting_configtext(
         'block_minhabiblioteca/apiurl',
         get_string('apiurl', 'block_minhabiblioteca'),
@@ -35,7 +33,6 @@ if ($ADMIN->fulltree) {
         PARAM_URL
     ));
 
-    // Chave API.
     $settings->add(new admin_setting_configpasswordunmask(
         'block_minhabiblioteca/apikey',
         get_string('apikey', 'block_minhabiblioteca'),

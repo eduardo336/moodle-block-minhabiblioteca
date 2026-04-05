@@ -23,41 +23,22 @@
  */
 class block_minhabiblioteca extends block_base {
 
-    /**
-     * Initialise the block title.
-     */
     public function init() {
         $this->title = get_string('pluginname', 'block_minhabiblioteca');
     }
 
-    /**
-     * This block has global (site-level) configuration via settings.php.
-     *
-     * @return bool
-     */
     public function has_config() {
         return true;
     }
 
-    /**
-     * This block can appear on any page type.
-     */
     public function applicable_formats() {
         return ['all' => true];
     }
 
-    /**
-     * Allow multiple instances on the same page.
-     */
     public function instance_allow_multiple() {
         return false;
     }
 
-    /**
-     * Build and return the block content.
-     *
-     * @return stdClass|null
-     */
     public function get_content() {
         global $USER, $CFG;
 
@@ -68,13 +49,12 @@ class block_minhabiblioteca extends block_base {
         $this->content = new stdClass();
         $this->content->footer = '';
 
-        // O bloco só mostra conteúdo para usuários logados com a capability.
         if (!isloggedin() || isguestuser()) {
             $this->content->text = '';
             return $this->content;
         }
 
-        // Monta a URL para o redirect.php com sesskey para proteção CSRF.
+        // url com sesskey — proteção csrf
         $redirecturl = new moodle_url('/blocks/minhabiblioteca/redirect.php', [
             'sesskey' => sesskey(),
         ]);
@@ -92,10 +72,11 @@ class block_minhabiblioteca extends block_base {
             ]
         );
 
-        // Quando a edição está ativa, exibe a URL estática para professores/admins.
-        // Verifica contra o contexto da página (não do bloco) para garantir herança correta.
+        // url estática visível só para quem pode gerenciar atividades (professores/admins)
+        // verifica o contexto da página, não do bloco, para herança correta
         $pagecontext = $this->page->context;
         $editinfo = '';
+        /* url para professores — remova o /* e o */ para reativar
         if ($this->page->user_is_editing() && has_capability('moodle/course:manageactivities', $pagecontext)) {
             $gourl = (new moodle_url('/blocks/minhabiblioteca/go.php'))->out(false);
             $editinfo = html_writer::div(
@@ -110,10 +91,10 @@ class block_minhabiblioteca extends block_base {
                 'block-minhabiblioteca-editinfo mt-2'
             );
         }
-
-        /* IMAGEM CLICÁVEL — descomente o bloco abaixo para exibir uma imagem abaixo do botão.
-         * Coloque o arquivo em: blocks/minhabiblioteca/pix/banner.png (260x120px recomendado)
         */
+
+        /* imagem clicável — remova o /* e o */ para ativar
+         * coloque o arquivo em: blocks/minhabiblioteca/pix/banner.png (260x120px recomendado)
         $imgurl = new moodle_url('/blocks/minhabiblioteca/pix/banner.png');
         $banner = html_writer::link(
             $redirecturl,
@@ -128,7 +109,7 @@ class block_minhabiblioteca extends block_base {
                 'rel'    => 'noopener noreferrer',
             ]
         );
-        
+        */
 
         $this->content->text = html_writer::div(
             $button . /* $banner . */ $editinfo,

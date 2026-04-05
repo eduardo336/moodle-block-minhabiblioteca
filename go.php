@@ -16,7 +16,7 @@
 
 /**
  * Autentica o usuário na Minha Biblioteca e redireciona.
- * Versão sem sesskey — adequada para uso como recurso URL, menus e links avulsos.
+ * Versão sem sesskey — para uso em recursos url, menus e links avulsos.
  *
  * @package    block_minhabiblioteca
  * @copyright  2026 UFMS
@@ -25,14 +25,8 @@
 
 require_once(__DIR__ . '/../../config.php');
 
-// Exige login — usuários não autenticados são redirecionados para o login.
 require_login();
 
-// Verifica capability.
-$context = context_system::instance();
-require_capability('block/minhabiblioteca:view', $context);
-
-// Recupera configurações do plugin.
 $apiurl = get_config('block_minhabiblioteca', 'apiurl');
 $apikey = get_config('block_minhabiblioteca', 'apikey');
 
@@ -41,31 +35,24 @@ if (empty($apikey)) {
     redirect(new moodle_url('/'));
 }
 
-// Dados do usuário logado.
-$firstname = $USER->firstname;
-$lastname  = $USER->lastname;
-$email     = $USER->email;
-
-// Monta o XML da requisição.
+// monta o xml pro post
 $xmlbody = '<?xml version="1.0" encoding="utf-8"?>'
     . '<CreateAuthenticatedUrlRequest xmlns="http://dli.zbra.com.br"'
     . ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"'
     . ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
-    . '<FirstName>' . htmlspecialchars($firstname, ENT_XML1, 'UTF-8') . '</FirstName>'
-    . '<LastName>'  . htmlspecialchars($lastname,  ENT_XML1, 'UTF-8') . '</LastName>'
-    . '<Email>'     . htmlspecialchars($email,     ENT_XML1, 'UTF-8') . '</Email>'
+    . '<FirstName>' . htmlspecialchars($USER->firstname, ENT_XML1, 'UTF-8') . '</FirstName>'
+    . '<LastName>'  . htmlspecialchars($USER->lastname,  ENT_XML1, 'UTF-8') . '</LastName>'
+    . '<Email>'     . htmlspecialchars($USER->email,     ENT_XML1, 'UTF-8') . '</Email>'
     . '</CreateAuthenticatedUrlRequest>';
 
-// Endpoint completo.
 $endpoint = rtrim($apiurl, '/') . '/AuthenticatedUrl';
 
-// Realiza a chamada HTTP com cURL.
 $ch = curl_init($endpoint);
 curl_setopt_array($ch, [
     CURLOPT_POST           => true,
     CURLOPT_POSTFIELDS     => $xmlbody,
     CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_CONNECTTIMEOUT => 10,
+    CURLOPT_CONNECTTIMEOUT => 10, // timeout de 10s pra não travar
     CURLOPT_TIMEOUT        => 15,
     CURLOPT_HTTPHEADER     => [
         'X-DigitalLibraryIntegration-API-Key: ' . $apikey,
@@ -83,7 +70,6 @@ if ($response === false || !empty($curlerror)) {
     redirect(new moodle_url('/'));
 }
 
-// Parseia o XML de resposta.
 libxml_use_internal_errors(true);
 $xml = simplexml_load_string($response);
 if ($xml === false) {
@@ -91,9 +77,9 @@ if ($xml === false) {
     redirect(new moodle_url('/'));
 }
 
+// namespace da resposta da api dli
 $ns = $xml->getNamespaces(true);
-$defaultns = reset($ns);
-$xml->registerXPathNamespace('dli', $defaultns);
+$xml->registerXPathNamespace('dli', reset($ns));
 
 $successnodes = $xml->xpath('//dli:Success');
 $success = !empty($successnodes) ? strtolower((string) $successnodes[0]) : 'false';
@@ -103,7 +89,7 @@ if ($success === 'true') {
     $authurl  = !empty($urlnodes) ? trim((string) $urlnodes[0]) : '';
 
     if (!empty($authurl) && filter_var($authurl, FILTER_VALIDATE_URL)) {
-        redirect($authurl);
+        redirect($authurl); // redireciona pro acervo
     }
 
     \core\notification::error(get_string('error_xmlparse', 'block_minhabiblioteca'));

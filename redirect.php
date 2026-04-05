@@ -24,15 +24,10 @@
 
 require_once(__DIR__ . '/../../config.php');
 
-// Exige login e valida sesskey (proteção CSRF).
+// sesskey protege contra csrf
 require_login();
 require_sesskey();
 
-// Verifica capability.
-$context = context_system::instance();
-require_capability('block/minhabiblioteca:view', $context);
-
-// Recupera configurações do plugin.
 $apiurl = get_config('block_minhabiblioteca', 'apiurl');
 $apikey = get_config('block_minhabiblioteca', 'apikey');
 
@@ -41,31 +36,24 @@ if (empty($apikey)) {
     redirect(new moodle_url('/'));
 }
 
-// Dados do usuário logado.
-$firstname = $USER->firstname;
-$lastname  = $USER->lastname;
-$email     = $USER->email;
+// monta o xml pro post
+$xmlbody = '<?xml version="1.0" encoding="utf-8"?>'
+    . '<CreateAuthenticatedUrlRequest xmlns="http://dli.zbra.com.br"'
+    . ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"'
+    . ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
+    . '<FirstName>' . htmlspecialchars($USER->firstname, ENT_XML1, 'UTF-8') . '</FirstName>'
+    . '<LastName>'  . htmlspecialchars($USER->lastname,  ENT_XML1, 'UTF-8') . '</LastName>'
+    . '<Email>'     . htmlspecialchars($USER->email,     ENT_XML1, 'UTF-8') . '</Email>'
+    . '</CreateAuthenticatedUrlRequest>';
 
-// Monta o XML da requisição.
-$xmlbody = '<?xml version="1.0" encoding="utf-8"?>' .
-    '<CreateAuthenticatedUrlRequest xmlns="http://dli.zbra.com.br"' .
-    ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"' .
-    ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' .
-    '<FirstName>' . htmlspecialchars($firstname, ENT_XML1, 'UTF-8') . '</FirstName>' .
-    '<LastName>'  . htmlspecialchars($lastname,  ENT_XML1, 'UTF-8') . '</LastName>' .
-    '<Email>'     . htmlspecialchars($email,     ENT_XML1, 'UTF-8') . '</Email>' .
-    '</CreateAuthenticatedUrlRequest>';
-
-// Endpoint completo.
 $endpoint = rtrim($apiurl, '/') . '/AuthenticatedUrl';
 
-// Realiza a chamada HTTP com cURL.
 $ch = curl_init($endpoint);
 curl_setopt_array($ch, [
     CURLOPT_POST           => true,
     CURLOPT_POSTFIELDS     => $xmlbody,
     CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_CONNECTTIMEOUT => 10,
+    CURLOPT_CONNECTTIMEOUT => 10, // timeout de 10s pra não travar
     CURLOPT_TIMEOUT        => 15,
     CURLOPT_HTTPHEADER     => [
         'X-DigitalLibraryIntegration-API-Key: ' . $apikey,
@@ -74,17 +62,15 @@ curl_setopt_array($ch, [
     ],
 ]);
 
-$response = curl_exec($ch);
+$response  = curl_exec($ch);
 $curlerror = curl_error($ch);
 curl_close($ch);
 
-// Trata erro de conexão.
 if ($response === false || !empty($curlerror)) {
     \core\notification::error(get_string('error_apicall', 'block_minhabiblioteca'));
     redirect(new moodle_url('/'));
 }
 
-// Parseia o XML de resposta.
 libxml_use_internal_errors(true);
 $xml = simplexml_load_string($response);
 if ($xml === false) {
@@ -92,10 +78,9 @@ if ($xml === false) {
     redirect(new moodle_url('/'));
 }
 
-// Registra o namespace da resposta.
+// namespace da resposta da api dli
 $ns = $xml->getNamespaces(true);
-$defaultns = reset($ns); // 'http://dli.zbra.com.br'
-$xml->registerXPathNamespace('dli', $defaultns);
+$xml->registerXPathNamespace('dli', reset($ns));
 
 $successnodes = $xml->xpath('//dli:Success');
 $success = !empty($successnodes) ? strtolower((string) $successnodes[0]) : 'false';
@@ -105,15 +90,12 @@ if ($success === 'true') {
     $authurl  = !empty($urlnodes) ? trim((string) $urlnodes[0]) : '';
 
     if (!empty($authurl) && filter_var($authurl, FILTER_VALIDATE_URL)) {
-        // Redireciona o usuário para a URL autenticada.
-        redirect($authurl);
+        redirect($authurl); // redireciona pro acervo
     }
 
-    // URL vazia ou inválida na resposta.
     \core\notification::error(get_string('error_xmlparse', 'block_minhabiblioteca'));
     redirect(new moodle_url('/'));
 } else {
-    // API retornou Success=false; exibe a mensagem de erro da API.
     $messagenodes = $xml->xpath('//dli:Message');
     $apimessage   = !empty($messagenodes) ? (string) $messagenodes[0] : '';
 

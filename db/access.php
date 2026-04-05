@@ -26,7 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $capabilities = [
 
-    // Permite adicionar o bloco a páginas de curso/site.
     'block/minhabiblioteca:addinstance' => [
         'riskbitmask' => RISK_SPAM,
         'captype'      => 'write',
@@ -38,7 +37,6 @@ $capabilities = [
         'clonepermissionsfrom' => 'moodle/site:manageblocks',
     ],
 
-    // Permite adicionar o bloco ao Dashboard pessoal.
     'block/minhabiblioteca:myaddinstance' => [
         'captype'      => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
@@ -48,7 +46,7 @@ $capabilities = [
         'clonepermissionsfrom' => 'moodle/my:manageblocks',
     ],
 
-    // Permite ver o bloco e acessar o link de redirecionamento.
+    // controla a exibição do bloco — não é verificado nos scripts de redirecionamento
     'block/minhabiblioteca:view' => [
         'captype'      => 'read',
         'contextlevel' => CONTEXT_BLOCK,

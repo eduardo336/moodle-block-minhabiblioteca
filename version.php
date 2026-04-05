@@ -24,8 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026040100;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2025041400;        // Requires Moodle 5.0.
+$plugin->version   = 2026040100; // yyyymmddxx
+$plugin->requires  = 2025041400; // moodle 5.0+
 $plugin->component = 'block_minhabiblioteca';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->release   = '1.0.0';
