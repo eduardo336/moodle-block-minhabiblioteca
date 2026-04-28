@@ -46,6 +46,7 @@ $xmlbody = '<?xml version="1.0" encoding="utf-8"?>'
     . '</CreateAuthenticatedUrlRequest>';
 
 $endpoint = rtrim($apiurl, '/') . '/AuthenticatedUrl';
+$apihost  = parse_url($apiurl, PHP_URL_HOST);
 
 $ch = curl_init($endpoint);
 curl_setopt_array($ch, [
@@ -57,7 +58,7 @@ curl_setopt_array($ch, [
     CURLOPT_HTTPHEADER     => [
         'X-DigitalLibraryIntegration-API-Key: ' . $apikey,
         'Content-Type: application/xml; charset=utf-8',
-        'Host: integracao.dli.minhabiblioteca.com.br',
+        'Host: ' . $apihost,
     ],
 ]);
 
