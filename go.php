@@ -30,6 +30,11 @@ require_login();
 $apiurl = get_config('block_minhabiblioteca', 'apiurl');
 $apikey = get_config('block_minhabiblioteca', 'apikey');
 
+if (empty($apiurl)) {
+    \core\notification::error(get_string('error_nourl', 'block_minhabiblioteca'));
+    redirect(new moodle_url('/'));
+}
+
 if (empty($apikey)) {
     \core\notification::error(get_string('error_nokey', 'block_minhabiblioteca'));
     redirect(new moodle_url('/'));

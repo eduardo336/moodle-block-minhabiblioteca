@@ -38,6 +38,7 @@ $string['apiurl_desc']   = 'Base URL of the Minha Biblioteca integration service
 $string['error_apicall']    = 'Could not connect to Minha Biblioteca. Please try again later.';
 $string['error_apiresponse'] = 'Minha Biblioteca returned an error: {$a}';
 $string['error_nokey']      = 'The Minha Biblioteca API key is not configured. Please contact the system administrator.';
+$string['error_nourl']      = 'The Minha Biblioteca API URL is not configured. Please contact the system administrator.';
 $string['error_xmlparse']   = 'Could not process the response from Minha Biblioteca. Please try again later.';
 
 $string['editmode_hint']    = 'URL to use in resources, menus or links (click to select):';

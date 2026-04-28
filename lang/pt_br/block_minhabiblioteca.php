@@ -38,6 +38,7 @@ $string['apiurl_desc']   = 'URL base do serviço de integração da Minha Biblio
 $string['error_apicall']     = 'Não foi possível conectar à Minha Biblioteca. Tente novamente mais tarde.';
 $string['error_apiresponse'] = 'A Minha Biblioteca retornou um erro: {$a}';
 $string['error_nokey']       = 'A chave de API da Minha Biblioteca não está configurada. Entre em contato com o administrador do sistema.';
+$string['error_nourl']       = 'A URL da API da Minha Biblioteca não está configurada. Entre em contato com o administrador do sistema.';
 $string['error_xmlparse']    = 'Não foi possível processar a resposta da Minha Biblioteca. Tente novamente mais tarde.';
 
 $string['editmode_hint']    = 'URL para usar em recursos, menus ou links do AVA (clique para selecionar):';
